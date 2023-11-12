@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itheima.reggie.mapper.SetmealMapper">
+
+    <select id="pageSetmeal" resultType="com.itheima.reggie.dto.SetmealDto" >
+        select setmeal.*,category.name
+        from reggie.setmeal,reggie.category
+        where setmeal.category_id = category.id
+        <if test="name!=null and name!=null">
+            and setmeal.name like CONCAT("%",#{name},"%")
+        </if>
+    </select>
+
+    <!--自定义结果集封装映射（一对多封装）-->
+    <resultMap id="setmealDtoResultMap" type="com.itheima.reggie.dto.SetmealDto" autoMapping="true">
+
+        <result property="id" column="id"/>
+
+        <collection property="setmealDishes" ofType="com.itheima.reggie.pojo.SetmealDish">
+            <result property="id" column="sd_id"/>
+            <result property="dishId" column="sd_dish_id"/>
+            <result property="setmealId" column="id"/>
+            <result property="name" column="sd_name"/>
+            <result property="price" column="sd_price"/>
+            <result property="copies" column="sd_copies"/>
+        </collection>
+    </resultMap>
+
+    <!--根据id查询套餐详情信息（包含菜品数据）-->
+    <select id="getStealWithDish" resultMap="setmealDtoResultMap">
+        select s.*,
+               sd.id      sd_id,
+               sd.dish_id sd_dish_id,
+               sd.name    sd_name,
+               sd.price   sd_price,
+               sd.copies  sd_copies
+        from reggie.setmeal s
+                 left join reggie.setmeal_dish sd on s.id = sd.setmeal_id
+        where s.id = #{id}
+    </select>
+</mapper>
