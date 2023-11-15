@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.itheima.reggie.common.R;
 import com.itheima.reggie.pojo.Employee;
 import com.itheima.reggie.service.EmployeeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +22,19 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("employee")
+@Api(tags = "员工模块")
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
     @PostMapping("login")
+    @ApiOperation("员工登录")
     public R<Employee> login(@RequestBody Employee employee, HttpSession session){
         Employee employee1 = employeeService.
                 query().
                 eq("username", employee.getUsername()).
-                one();
+                one();//西二402
 
         if(employee1 == null){
             //说明账号不存在
@@ -72,6 +78,12 @@ public class EmployeeController {
 
     //分页查询
     @GetMapping("page")
+    @ApiOperation("分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page",value = "页码"),
+            @ApiImplicitParam(name = "pageSize",value = "页面大小"),
+            @ApiImplicitParam(name = "name",value = "员工姓名")
+    })
     public R page(Integer page,Integer pageSize,String name){
         //创建一个分页对象page
         Page<Employee> pageInfo = new Page<>(page,pageSize);

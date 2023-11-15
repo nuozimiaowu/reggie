@@ -1,5 +1,7 @@
 package com.itheima.reggie.common;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,10 +10,14 @@ import java.io.Serializable;
  * 通用返回结果，服务端响应的数据最终都会封装成此对象
  */
 @Data
+@ApiModel("通用返回对象")
 public class R<T> implements Serializable {
 
+    @ApiModelProperty("响应状态")
     private Integer code; //编码：1成功，0和其它数字为失败
+    @ApiModelProperty("错误信息")
     private String msg; //错误信息
+    @ApiModelProperty("响应数据")
     private T data; //数据
 
     public static <T> R<T> success(T data) {
